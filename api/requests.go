@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -59,4 +60,34 @@ func GetAPIState() (string, error) {
 		reqtype: "GET",
 	}
 	return req.send(), nil
+}
+
+func GetEntityStates() ([]*Entity, error) {
+	var entities []*HAEntity
+	req := HARequest{
+		url:     fmt.Sprintf("http://%s/api/states", os.Getenv("HA_URL")),
+		token:   os.Getenv("HA_TOKEN"),
+		reqtype: "GET",
+	}
+
+	entitiesJson := req.send()
+	json.Unmarshal([]byte(entitiesJson), &entities)
+
+	var convertedEntities []*Entity
+	for _, e := range entities {
+		convertedEntities = append(convertedEntities, &Entity{
+			id:       strings.Split(e.ID, ".")[1],
+			state:    e.State,
+			category: strings.Split(e.ID, ".")[0],
+		})
+	}
+	for _, e := range convertedEntities {
+		fmt.Println(e)
+	}
+	return convertedEntities, nil
+}
+
+func GetEntityState(entity Entity) (Entity, error) {
+
+	return Entity{}, nil
 }
