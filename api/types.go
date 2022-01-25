@@ -1,9 +1,9 @@
 package api
 
 type Entity struct {
-	id       string
-	state    string
-	category string
+	ID       string
+	State    string
+	Category string
 }
 
 type HAEntity struct {

@@ -76,14 +76,12 @@ func GetEntityStates() ([]*Entity, error) {
 	var convertedEntities []*Entity
 	for _, e := range entities {
 		convertedEntities = append(convertedEntities, &Entity{
-			id:       strings.Split(e.ID, ".")[1],
-			state:    e.State,
-			category: strings.Split(e.ID, ".")[0],
+			ID:       strings.Split(e.ID, ".")[1],
+			State:    e.State,
+			Category: strings.Split(e.ID, ".")[0],
 		})
 	}
-	for _, e := range convertedEntities {
-		fmt.Println(e)
-	}
+
 	return convertedEntities, nil
 }
 

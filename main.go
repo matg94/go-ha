@@ -2,12 +2,18 @@ package main
 
 import (
 	"autobubble/api"
-	"log"
+	"autobubble/userinterface"
+	"fmt"
+	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	_, err := api.GetEntityStates()
-	if err != nil {
-		log.Fatal(err)
+	entities, _ := api.GetEntityStates()
+	p := tea.NewProgram(userinterface.InitialModel(entities))
+	if err := p.Start(); err != nil {
+		fmt.Printf("Alas, there's been an error: %v", err)
+		os.Exit(1)
 	}
 }
