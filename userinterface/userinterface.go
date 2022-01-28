@@ -24,3 +24,14 @@ func InitialModel(allEntities []*api.Entity) model {
 		entities:       allEntities,
 	}
 }
+
+func (m *model) UpdateEntities(updatedEntities []*api.Entity) {
+	for _, entity := range m.entities {
+		for _, updatedEntity := range updatedEntities {
+			if entity.ID != updatedEntity.ID {
+				continue
+			}
+			entity.State = updatedEntity.State
+		}
+	}
+}

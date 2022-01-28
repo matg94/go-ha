@@ -25,7 +25,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// Is it a key press?
 	case tea.KeyMsg:
-
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
@@ -69,6 +68,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.shownEntities = append(m.shownEntities, entity)
 					}
 				}
+			} else {
+				for i, entity := range m.shownEntities {
+					if m.entityCursor == i {
+						api.ActivateService(entity.Category, "toggle", entity.ID)
+						break
+					}
+				}
+				newState, _ := api.GetEntityStates()
+				m.UpdateEntities(newState)
 			}
 		case "b":
 			if m.selected {
