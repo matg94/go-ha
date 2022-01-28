@@ -13,6 +13,7 @@ type model struct {
 	categoryCursor int
 	entityCursor   int
 	entities       []*api.Entity
+	shownEntities  []*api.Entity
 }
 
 func (m model) Init() tea.Cmd {
@@ -34,21 +35,49 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "up" and "k" keys move the cursor up
 		case "up", "k":
-			if m.categoryCursor > 0 {
-				m.categoryCursor--
+			if !m.selected {
+				if m.categoryCursor > 0 {
+					m.categoryCursor--
+				}
+			} else {
+				if m.entityCursor > 0 {
+					m.entityCursor--
+				}
 			}
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if m.categoryCursor < len(m.categories)-1 {
-				m.categoryCursor++
+			if !m.selected {
+				if m.categoryCursor < len(m.categories)-1 {
+					m.categoryCursor++
+				}
+			} else {
+				if m.entityCursor < len(m.shownEntities)-1 {
+					m.entityCursor++
+				}
 			}
 
 		// The "enter" key and the spacebar (a literal space) toggle
 		// the selected state for the item that the cursor is pointing at.
 		case "enter", " ":
-
+			if !m.selected {
+				m.entityCursor = 0
+				m.selected = true
+				m.shownEntities = []*api.Entity{}
+				for _, entity := range m.entities {
+					if entity.Category == m.categories[m.categoryCursor] {
+						m.shownEntities = append(m.shownEntities, entity)
+					}
+				}
+			}
+		case "b":
+			if m.selected {
+				m.shownEntities = []*api.Entity{}
+				m.entityCursor = 0
+				m.selected = false
+			}
 		}
+
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
@@ -71,6 +100,20 @@ func (m model) View() string {
 
 		// Render the row
 		s += fmt.Sprintf("%s %s\n", cursor, choice)
+
+		if m.selected {
+
+			for i, entity := range m.shownEntities {
+				curs := " "
+				if entity.Category == choice {
+					if m.entityCursor == i {
+						curs = ">"
+					}
+
+					s += fmt.Sprintf("%s - %s : %s\n", curs, entity.ID, entity.State)
+				}
+			}
+		}
 	}
 
 	// The footer
