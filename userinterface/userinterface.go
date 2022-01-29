@@ -2,7 +2,8 @@ package userinterface
 
 import "autobubble/api"
 
-func InitialModel(allEntities []*api.Entity) model {
+func InitialModel(api api.HaApi) model {
+	allEntities := api.GetEntityStates()
 	var categories []string
 	for _, e := range allEntities {
 		var exists = false

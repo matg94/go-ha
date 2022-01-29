@@ -14,6 +14,7 @@ type model struct {
 	entityCursor   int
 	entities       []*api.Entity
 	shownEntities  []*api.Entity
+	api            api.HaApi
 }
 
 func (m model) Init() tea.Cmd {
@@ -71,11 +72,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				for i, entity := range m.shownEntities {
 					if m.entityCursor == i {
-						api.ActivateService(entity.Category, "toggle", entity.ID)
+						m.api.ActivateService(entity.Category, "toggle", entity.ID)
 						break
 					}
 				}
-				newState, _ := api.GetEntityStates()
+				newState := m.api.GetEntityStates()
 				m.UpdateEntities(newState)
 			}
 		case "b":
@@ -115,17 +116,17 @@ func (m model) View() string {
 				curs := " "
 				if entity.Category == choice {
 					if m.entityCursor == i {
-						curs = ">"
+						curs = "->"
 					}
 
-					s += fmt.Sprintf("%s - %s : %s\n", curs, entity.ID, entity.State)
+					s += fmt.Sprintf("%s | %s     : %s\n", curs, entity.State, entity.ID)
 				}
 			}
 		}
 	}
 
 	// The footer
-	s += "\nPress q to quit.\n"
+	s += "\nq - Quit | b - back | enter - toggle\n"
 
 	// Send the UI for rendering
 	return s

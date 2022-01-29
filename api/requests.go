@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"strings"
 	"time"
 )
 
@@ -51,60 +49,4 @@ func (req *HARequest) send() string {
 	}
 
 	return string(res)
-}
-
-func GetAPIState() (string, error) {
-	req := HARequest{
-		url:     fmt.Sprintf("http://%s/api/", os.Getenv("HA_URL")),
-		token:   os.Getenv("HA_TOKEN"),
-		reqtype: "GET",
-	}
-	return req.send(), nil
-}
-
-func GetEntityStates() ([]*Entity, error) {
-	var entities []*HAEntity
-	req := HARequest{
-		url:     fmt.Sprintf("http://%s/api/states", os.Getenv("HA_URL")),
-		token:   os.Getenv("HA_TOKEN"),
-		reqtype: "GET",
-	}
-
-	entitiesJson := req.send()
-	json.Unmarshal([]byte(entitiesJson), &entities)
-
-	var convertedEntities []*Entity
-	for _, e := range entities {
-		convertedEntities = append(convertedEntities, &Entity{
-			ID:       strings.Split(e.ID, ".")[1],
-			State:    e.State,
-			Category: strings.Split(e.ID, ".")[0],
-		})
-	}
-
-	return convertedEntities, nil
-}
-
-func ActivateService(category string, serviceName string, entityId string) ([]*Entity, error) {
-	var changedEntities []*HAEntity
-	req := HARequest{
-		url:     fmt.Sprintf("http://%s/api/services/%s/%s", os.Getenv("HA_URL"), category, serviceName),
-		token:   os.Getenv("HA_TOKEN"),
-		body:    map[string]string{"entity_id": fmt.Sprintf("%s.%s", category, entityId)},
-		reqtype: "POST",
-	}
-
-	entitiesJson := req.send()
-	json.Unmarshal([]byte(entitiesJson), &changedEntities)
-
-	var convertedEntities []*Entity
-	for _, e := range changedEntities {
-		convertedEntities = append(convertedEntities, &Entity{
-			ID:       strings.Split(e.ID, ".")[1],
-			State:    e.State,
-			Category: strings.Split(e.ID, ".")[0],
-		})
-	}
-
-	return convertedEntities, nil
 }
