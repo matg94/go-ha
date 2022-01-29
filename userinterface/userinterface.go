@@ -23,6 +23,7 @@ func InitialModel(api api.HaApi) model {
 		categoryCursor: 0,
 		entityCursor:   0,
 		entities:       allEntities,
+		api:            api,
 	}
 }
 
