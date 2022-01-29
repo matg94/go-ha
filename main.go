@@ -1,11 +1,12 @@
 package main
 
 import (
-	"autobubble/api"
-	"autobubble/userinterface"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/matg94/go-ha/api"
+	"github.com/matg94/go-ha/userinterface"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

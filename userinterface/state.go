@@ -1,8 +1,9 @@
 package userinterface
 
 import (
-	"autobubble/api"
 	"fmt"
+
+	"github.com/matg94/go-ha/api"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
