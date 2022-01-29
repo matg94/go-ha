@@ -1,6 +1,6 @@
 package userinterface
 
-import "autobubble/api"
+import "github.com/matg94/go-ha/api"
 
 func InitialModel(api api.HaApi) model {
 	allEntities := api.GetEntityStates()
